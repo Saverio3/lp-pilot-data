@@ -10,6 +10,7 @@ sim(P, O, fund, base, alpha, beta, auction, capture, hedge, ratio, ...)
   auction  CoW-style: arbitrage is auctioned, pool keeps `capture` of the profit
   hedge  0 none, 1 spot-first hedge (spot bought from 10% reserve, perp for the rest), 2 perp only
   ratio  hedge ratio per step (1 = full)
+  Hp     price the hedge is computed from (default P). A smoothed price = hedge the trend, ignore wiggles.
 Returns (final vs HODL, worst moment vs HODL, funding paid / capital). Retail flow not modelled.
 """
 import math
@@ -18,7 +19,7 @@ from numba import njit
 
 
 @njit(cache=True)
-def _sim(P, O, fund, base, alpha, beta, auction, capture, hedge, ratio,
+def _sim(P, O, fund, base, alpha, beta, auction, capture, hedge, ratio, Hp,
          gas, cex_fee, perp_fee, spot_fee, band, cap):
     n = len(P)
     f = 0.9 if hedge > 0 else 1.0
@@ -66,7 +67,8 @@ def _sim(P, O, fund, base, alpha, beta, auction, capture, hedge, ratio,
                     if (y - yn) - dx / g1 * p > gas + cex_fee * dx / g1 * p:
                         x += dx / g1; y = yn
         if hedge > 0:
-            need = (E0 - x0) + ratio[i] * (x0 - x)
+            xh = x * math.sqrt(p / Hp[i])  # pool inventory if the price were Hp (CPMM: x ~ 1/sqrt(p))
+            need = (E0 - x0) + ratio[i] * (x0 - xh)
             if abs(need - (eth + h)) > band * E0:
                 te = 0.0
                 if hedge == 1 and need > 0:
@@ -84,7 +86,7 @@ def _sim(P, O, fund, base, alpha, beta, auction, capture, hedge, ratio,
 
 
 def sim(P, O=None, fund=None, base=0.003, alpha=0.0, beta=0.0, auction=False, capture=0.8,
-        hedge=0, ratio=1.0, gas=0.05, cex_fee=0.0002, perp_fee=0.0003, spot_fee=0.0005,
+        hedge=0, ratio=1.0, Hp=None, gas=0.05, cex_fee=0.0002, perp_fee=0.0003, spot_fee=0.0005,
         band=0.02, cap=10e6):
     n = len(P)
     P = np.ascontiguousarray(P, dtype=np.float64)
@@ -92,5 +94,6 @@ def sim(P, O=None, fund=None, base=0.003, alpha=0.0, beta=0.0, auction=False, ca
     fund = np.zeros(n) if fund is None else np.ascontiguousarray(fund, dtype=np.float64)
     base = np.full(n, base) if np.isscalar(base) else np.ascontiguousarray(base, dtype=np.float64)
     ratio = np.full(n, float(ratio)) if np.isscalar(ratio) else np.ascontiguousarray(ratio, dtype=np.float64)
-    return _sim(P, O, fund, base, float(alpha), float(beta), bool(auction), float(capture), int(hedge), ratio,
+    Hp = P if Hp is None else np.ascontiguousarray(Hp, dtype=np.float64)
+    return _sim(P, O, fund, base, float(alpha), float(beta), bool(auction), float(capture), int(hedge), ratio, Hp,
                 gas, cex_fee, perp_fee, spot_fee, band, cap)
