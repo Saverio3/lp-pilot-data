@@ -17,7 +17,9 @@ s = pd.DataFrame({
     'avg worst moment %': worst.mean(), 'worst pair %': comp.min(),
     'avg pool-vs-market gap %': d.groupby('design').gap.mean() * 100 if 'gap' in d else np.nan,
     'pool off market >1% (time %)': d.groupby('design').off1pct.mean() * 100 if 'off1pct' in d else np.nan,
-}).sort_values('avg compounded %', ascending=False)
+})
+s['usable pool?'] = np.where(s['pool off market >1% (time %)'] < 2, 'yes', 'NO - price drifts from market')
+s = s.sort_values('avg compounded %', ascending=False)
 os.makedirs(os.path.join(ROOT, 'results'), exist_ok=True)
 comp.round(2).to_csv(os.path.join(ROOT, 'results', 'compounded.csv'))
 with open(os.path.join(ROOT, 'results', 'SUMMARY.md'), 'w') as f:

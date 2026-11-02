@@ -55,7 +55,7 @@ for f in sorted(glob.glob(os.path.join(ROOT, 'lab', 'methods', '*.py'))):
     if nm.startswith('_') or (want and nm not in want): continue
     src = open(f, 'rb').read(); ver = hashlib.sha1(src).hexdigest()[:10] + '-' + ENGINE_VERSION; vers[nm] = ver
     prev = old[old.method == nm]
-    if not force and len(prev) and prev.ver.isna().all() | (prev.ver == ver).all():
+    if not force and len(prev) and (prev.ver == ver).all():
         skipped.append(nm); continue
     spec = importlib.util.spec_from_file_location(nm, f); m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
     m._uses_score = b"score" in src
