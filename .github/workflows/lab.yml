@@ -53,7 +53,10 @@ jobs:
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
       - run: pip install pandas tabulate
-      - run: python lab/summarise.py
+      - run: |
+          pip freeze | grep -i -E "pandas|numpy|tabulate" > results/summary_log.txt
+          ls results/raw >> results/summary_log.txt
+          python lab/summarise.py >> results/summary_log.txt 2>&1 || echo "SUMMARY FAILED" >> results/summary_log.txt
       - run: |
           git config user.name "lab-bot"
           git config user.email "lab-bot@users.noreply.github.com"
