@@ -1,0 +1,43 @@
+name: latency
+# Price-feed delay test on 1-second Binance data (downloaded on the runner, not stored in the repo)
+on:
+  workflow_dispatch:
+  push:
+    paths: ['lab/latency.py', 'lab/latency_summary.py', 'lab/engine.py', '.github/workflows/latency.yml']
+permissions:
+  contents: write
+concurrency: {group: latency, cancel-in-progress: false}
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix: {coin: [ETHUSDT, BTCUSDT, SOLUSDT, DOGEUSDT, LINKUSDT, XRPUSDT]}
+    steps:
+      - uses: actions/checkout@v4
+        with: {sparse-checkout: lab}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12', cache: pip}
+      - run: pip install numpy pandas pyarrow numba
+      - run: python lab/latency.py ${{ matrix.coin }}
+      - uses: actions/upload-artifact@v4
+        with: {name: 'lat-${{ matrix.coin }}', path: results/latency/}
+  summary:
+    needs: run
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: {pattern: 'lat-*', path: results/latency, merge-multiple: true}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install pandas tabulate
+      - run: python lab/latency_summary.py
+      - run: |
+          git config user.name "lab-bot"
+          git config user.email "lab-bot@users.noreply.github.com"
+          git add results
+          git commit -m "Latency results ${{ github.sha }}" || exit 0
+          for i in 1 2 3 4 5; do git pull --rebase -q && git push && break; sleep 10; done
