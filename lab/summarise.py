@@ -15,6 +15,8 @@ s = pd.DataFrame({
     'beats CoW': (comp.gt(comp[COW], axis=0)).sum().astype(str) + f'/{len(comp)}',
     'bad years %': bad.mean(), 'calm years %': calm.mean(),
     'avg worst moment %': worst.mean(), 'worst pair %': comp.min(),
+    'avg pool-vs-market gap %': d.groupby('design').gap.mean() * 100 if 'gap' in d else np.nan,
+    'pool off market >1% (time %)': d.groupby('design').off1pct.mean() * 100 if 'off1pct' in d else np.nan,
 }).sort_values('avg compounded %', ascending=False)
 os.makedirs(os.path.join(ROOT, 'results'), exist_ok=True)
 comp.round(2).to_csv(os.path.join(ROOT, 'results', 'compounded.csv'))

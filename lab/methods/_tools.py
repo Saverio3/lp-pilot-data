@@ -38,3 +38,24 @@ def variance_ratio(P, window=43200, short=60, long=1440):
     rs = lp.diff(short); rl = lp.diff(long)
     vr = rl.pow(2).rolling(window, min_periods=4320).mean() / (long / short * rs.pow(2).rolling(window, min_periods=4320).mean())
     return vr.shift(1).fillna(1.0).values
+
+
+def ann_vol(P, window=43200):
+    """Past-only annualised volatility over a rolling window (default 30 days of minutes)."""
+    import pandas as pd
+    r = pd.Series(np.log(P)).diff()
+    v = r.rolling(window, min_periods=1440).std().shift(1).bfill().values
+    return v * math.sqrt(525600)
+
+
+@njit(cache=True)
+def hmm_high_vol_prob(r, s_lo, s_hi, stay):
+    """2-state regime filter (Hamilton 1989): probability we are in the high-volatility regime, using past returns only."""
+    n = len(r); out = np.empty(n); p = 0.5
+    for i in range(n):
+        out[i] = p
+        lo = math.exp(-0.5 * (r[i] / s_lo) ** 2) / s_lo
+        hi = math.exp(-0.5 * (r[i] / s_hi) ** 2) / s_hi
+        post = p * hi / (p * hi + (1 - p) * lo + 1e-300)
+        p = stay * post + (1 - stay) * (1 - post)
+    return out

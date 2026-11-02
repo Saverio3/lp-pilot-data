@@ -37,11 +37,11 @@ rows = []
 for B in [2, 12]:
     idx = np.arange(120, len(P), B)
     Pb = P[idx]
-    fin, worst, _ = sim(Pb, base=0.003)
+    fin, worst = sim(Pb, base=0.003)[:2]
     rows.append(dict(coin=S, block=B, design='Uniswap 0.30%', lag=np.nan, alpha=0, final=fin, worst=worst))
     for a in [0.75, 0.9]:
         for L in [0, 1, 2, 3, 5, 10, 30, 60]:
-            fin, worst, _ = sim(Pb, O=P[idx - L], base=0.003, alpha=a)
+            fin, worst = sim(Pb, O=P[idx - L], base=0.003, alpha=a)[:2]
             rows.append(dict(coin=S, block=B, design=f'Gap fee a={a}', lag=L, alpha=a, final=fin, worst=worst))
     print(S, 'block', B, 'done', flush=True)
 os.makedirs(os.path.join(ROOT, 'results', 'latency'), exist_ok=True)
