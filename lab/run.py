@@ -85,3 +85,5 @@ out = pd.DataFrame(rows); path = os.path.join(ROOT, 'results', 'raw', f'{PAIR}.c
 if os.path.exists(path):  # keep earlier results of method files not re-run this time
     old = pd.read_csv(path); out = pd.concat([old[~old.method.isin(out.method.unique())], out])
 out.to_csv(path, index=False)
+os.makedirs(os.path.join(ROOT, 'results', 'out'), exist_ok=True)
+out.to_csv(os.path.join(ROOT, 'results', 'out', f'{PAIR}.csv'), index=False)  # only this pair, for upload
