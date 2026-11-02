@@ -24,7 +24,7 @@ import numpy as np
 from numba import njit
 
 # Bump ONLY when existing features change meaning (forces every method to re-run). Adding new options does not.
-ENGINE_VERSION = "2"  # 2: adds pool-price drift metrics
+ENGINE_VERSION = "3"  # 2: pool-price drift metrics; 3: re-run all so every design has them
 
 
 @njit(cache=True)

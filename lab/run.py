@@ -95,7 +95,6 @@ os.makedirs(os.path.join(ROOT, 'results', 'raw'), exist_ok=True)
 out = pd.DataFrame(rows)
 if len(out): out['ver'] = out.method.map(vers)
 keep = old[~old.method.isin([n for n, _ in mods])].copy() if len(old) else old
-if len(keep): keep['ver'] = keep.method.map(vers).where(keep.method.isin(list(vers)), keep.ver)
 out = pd.concat([keep, out]) if len(out) else keep
 out.to_csv(path, index=False)
 os.makedirs(os.path.join(ROOT, 'results', 'out'), exist_ok=True)
