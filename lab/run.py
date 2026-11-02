@@ -83,7 +83,8 @@ for y in sorted(yr.unique()):
     if msk.sum() < 20000: continue
     P = p[msk]
     ctx = dict(P=P, n=len(P), fund=fr[msk], score=score.values[msk], rv60=rv60[msk],
-               stale=np.r_[P[0], P[:-1]], pair=PAIR, year=int(y))
+               stale=np.r_[P[0], P[:-1]], pair=PAIR, year=int(y),
+               P_all=p, fund_all=fr, yr_all=yr.values)  # full history, for methods that train on other years
     for nm, m in mods:
         for dn, kw in m.designs(ctx):
             t0 = time.time()
