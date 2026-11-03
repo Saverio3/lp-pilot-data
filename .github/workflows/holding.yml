@@ -48,8 +48,9 @@ jobs:
         with: {pattern: 'hold-*', path: results/holding, merge-multiple: true}
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
-      - run: pip install pandas tabulate
+      - run: pip install pandas tabulate openpyxl pyarrow
       - run: python lab/holding_summary.py > results/holding_log.txt 2>&1 || echo "SUMMARY FAILED" >> results/holding_log.txt
+      - run: python lab/make_excel.py || echo 'excel build failed'
       - run: |
           git config user.name "lab-bot"
           git config user.email "lab-bot@users.noreply.github.com"

@@ -53,11 +53,12 @@ jobs:
       - run: mkdir -p results/raw && cp results/out/*.csv results/raw/ && rm -rf results/out
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
-      - run: pip install pandas tabulate
+      - run: pip install pandas tabulate openpyxl pyarrow
       - run: |
           pip freeze | grep -i -E "pandas|numpy|tabulate" > results/summary_log.txt
           ls results/raw >> results/summary_log.txt
           python lab/summarise.py >> results/summary_log.txt 2>&1 || echo "SUMMARY FAILED" >> results/summary_log.txt
+      - run: python lab/make_excel.py || echo 'excel build failed'
       - run: |
           git config user.name "lab-bot"
           git config user.email "lab-bot@users.noreply.github.com"
