@@ -1,4 +1,69 @@
-ethereum FAILED pools: HTTP Error 403: Forbidden
-arbitrum FAILED pools: HTTP Error 403: Forbidden
-base FAILED pools: HTTP Error 403: Forbidden
-matched pools: 0
+API key present: True | length: 32
+matched pools: 76
+ethereum ETH_USD 0.0005 days so far 1767
+ethereum ETH_USD 0.003 days so far 3534
+ethereum ETH_USD 0.003 days so far 5301
+base ETH_USD 0.003 days so far 6380
+ethereum BTC_ETH 0.003 days so far 8147
+base BTC_USD 0.01 days so far 8913
+ethereum BTC_USD 0.003 days so far 10680
+ethereum BTC_ETH 0.0005 days so far 12447
+arbitrum ETH_USD 0.0005 days so far 13692
+ethereum BTC_USD 0.003 days so far 15459
+arbitrum BTC_ETH 0.0005 days so far 17226
+ethereum ETH_LINK 0.003 days so far 18993
+ethereum BTC_USD 0.0005 days so far 20325
+arbitrum ETH_USD 0.0005 days so far 22092
+base ETH_USD 0.0005 days so far 23247
+arbitrum ETH_USD 0.0005 days so far 25014
+base BTC_ETH 0.0004 days so far 25112
+base BTC_ETH 0.0005 days so far 25894
+arbitrum BTC_USD 0.0005 days so far 27118
+base BTC_USD 0.01 days so far 27121
+base BTC_USD 0.0004 days so far 27181
+base BTC_ETH 0.003 days so far 27964
+arbitrum BTC_USD 0.0005 days so far 29138
+base ETH_USD 0.0002 days so far 29894
+base DOGE_ETH 0.0005 days so far 29908
+ethereum ETH_SOL 0.003 days so far 31675
+arbitrum ETH_LINK 0.003 days so far 33442
+arbitrum BTC_ETH 0.003 days so far 35208
+ethereum LINK_USD 0.003 days so far 36934
+ethereum ETH_TRX 0.0005 days so far 37446
+ethereum BTC_ETH 0.01 days so far 38856
+base DOGE_ETH 0.0005 days so far 38858
+arbitrum BTC_USD 0.003 days so far 40101
+arbitrum LINK_USD 0.003 days so far 41593
+arbitrum ETH_LINK 0.0005 days so far 43111
+arbitrum BTC_LINK 0.003 days so far 44206
+                          days  median_daily_turnover  median_fee_apr    median_tvl
+chain    pair     fee                                                              
+arbitrum BTC_ETH  0.0005  1744                 0.5890          0.1075  4.406891e+07
+                  0.0030  1766                 0.0381          0.0417  4.129963e+06
+         BTC_LINK 0.0030   838                 0.0000          0.0000  2.136764e+05
+         BTC_USD  0.0005  2080                 0.0000          0.0000  1.362420e+07
+                  0.0030  1088                 0.0000          0.0000  8.250396e+05
+         ETH_LINK 0.0005   508                 0.8660          0.1580  3.225706e+05
+                  0.0030  1767                 0.1297          0.1421  4.509271e+06
+         ETH_USD  0.0005  4778                 1.0935          0.1996  3.179407e+07
+         LINK_USD 0.0030   844                 0.1495          0.1637  5.739113e+05
+base     BTC_ETH  0.0004    25                 0.0000          0.0000  2.242513e+07
+                  0.0005   782                 1.3679          0.2496  3.631605e+06
+                  0.0030   782                 0.1723          0.1886  8.171016e+06
+         BTC_USD  0.0004    34                 0.0000          0.0000  1.530356e+07
+                  0.0100   581                 0.0000          0.0000  1.933963e+08
+         DOGE_ETH 0.0005    15                 0.1114          0.0203  1.391687e+07
+         ETH_USD  0.0002   557                 0.0000          0.0000  8.869458e+06
+                  0.0005  1095                 1.6445          0.3001  3.023484e+07
+                  0.0030   921                 0.4056          0.4441  9.737776e+06
+ethereum BTC_ETH  0.0005  1767                 0.3007          0.0549  1.159458e+08
+                  0.0030  1767                 0.0250          0.0274  2.765547e+08
+                  0.0100  1410                 0.0011          0.0039  1.589792e+06
+         BTC_USD  0.0005   877                 0.9005          0.1643  1.852255e+07
+                  0.0030  3534                 0.0590          0.0646  6.619716e+07
+         ETH_LINK 0.0030  1767                 0.1105          0.1210  5.486552e+07
+         ETH_SOL  0.0030  1747                 0.1075          0.1177  6.684487e+06
+         ETH_TRX  0.0005   512                 0.0002          0.0000  1.527382e+07
+         ETH_USD  0.0005  1767                 0.5054          0.0922  3.922647e+08
+                  0.0030  3534                 0.0680          0.0745  2.678546e+08
+         LINK_USD 0.0030  1726                 0.0944          0.1034  1.627099e+06
