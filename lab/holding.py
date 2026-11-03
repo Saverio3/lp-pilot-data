@@ -22,7 +22,8 @@ else:
 px = px[px.close > 0]; fr = funding(A, px.index.values) - (funding(B, px.index.values) if B else 0)
 p = px.close.values.astype(float); qv = px.qv.values.astype(float); t = pd.to_datetime(px.index.values, unit='ms')
 r = np.r_[0.0, np.diff(np.log(p))]; rv60 = pd.Series(r ** 2).rolling(60).mean().shift(1).bfill().values
-starts = np.searchsorted(px.index.values, pd.date_range(t[0].normalize(), t[-1], freq='MS').asi8 // 10**6)
+starts = np.searchsorted(px.index.values, pd.date_range(t[0].normalize(), t[-1], freq='MS').as_unit('ms').asi8)
+starts = np.unique(starts)
 rows = []
 for s0 in starts:
     for H in [30, 90, 365]:
@@ -35,7 +36,10 @@ for s0 in starts:
         D = {'Uniswap 0.30%': dict(base=0.003), 'Earn (fee only)': dict(base=vf, gamma=1.0),
              'Shield band 5%': dict(base=vf, gamma=1.0, hedge=1, Hp=lowpass_price(P, 1440), band=0.05),
              'Band 30% + 7d': shield,
-             'Per-pair rule (365d vol < 50% -> Earn)': (dict(base=vf, gamma=1.0) if (not np.isnan(pv) and pv < 0.5) else shield)}
+             'Per-pair rule (365d vol < 50% -> Earn)': (dict(base=vf, gamma=1.0) if (not np.isnan(pv) and pv < 0.5) else shield),
+             'FLAT Earn (0.30% + size fee)': dict(base=0.003, gamma=1.0),
+             'FLAT Band 30% + 7d': dict(base=0.003, gamma=1.0, hedge=1, Hp=lowpass_price(P, 10080), band=0.30),
+             'FLAT Per-pair rule': (dict(base=0.003, gamma=1.0) if (not np.isnan(pv) and pv < 0.5) else dict(base=0.003, gamma=1.0, hedge=1, Hp=lowpass_price(P, 10080), band=0.30))}
         for dn, kw in D.items():
             o = sim(P, fund=fr[s0:e], retail=ret, **kw)
             rows.append(dict(pair=PAIR, start=str(t[s0].date()), days=H, design=dn, final=o[0], worst=o[1], final_r1=o[5], final_r2=o[7]))

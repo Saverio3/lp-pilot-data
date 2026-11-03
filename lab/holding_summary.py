@@ -1,6 +1,7 @@
 import os, glob, numpy as np, pandas as pd
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 d = pd.concat([pd.read_csv(f) for f in glob.glob(os.path.join(ROOT, 'results', 'holding', '*.csv'))])
+d = d.groupby(['pair', 'start', 'days', 'design'], as_index=False).mean(numeric_only=True)
 u = d[d.design == 'Uniswap 0.30%'].set_index(['pair', 'start', 'days'])
 out = []
 for col, lab in [('final', 'without normal traders'), ('final_r1', 'with normal traders (mild)'), ('final_r2', 'with normal traders (strong)')]:
