@@ -1,0 +1,6 @@
+[submodule "hook/lib/uniswap-hooks"]
+	path = hook/lib/uniswap-hooks
+	url = https://github.com/OpenZeppelin/uniswap-hooks
+[submodule "hook/lib/forge-std"]
+	path = hook/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
