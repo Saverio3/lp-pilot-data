@@ -1,0 +1,16 @@
+import os, glob, numpy as np, pandas as pd
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+d = pd.concat([pd.read_csv(f) for f in glob.glob(os.path.join(ROOT, 'results', 'holding', '*.csv'))])
+u = d[d.design == 'Uniswap 0.30%'].set_index(['pair', 'start', 'days'])
+out = []
+for col, lab in [('final', 'without normal traders'), ('final_r1', 'with normal traders (mild)'), ('final_r2', 'with normal traders (strong)')]:
+    for (days, des), g in d.groupby(['days', 'design']):
+        gi = g.set_index(['pair', 'start', 'days'])[col] * 100; ui = u[col].reindex(gi.index) * 100
+        out.append(dict(scenario=lab, days=days, design=des, median=gi.median(), mean=gi.mean(), p5_worst_case=gi.quantile(0.05),
+                        pct_positive=(gi > 0).mean() * 100, pct_beats_uniswap=(gi > ui).mean() * 100, n=len(gi)))
+s = pd.DataFrame(out)
+with open(os.path.join(ROOT, 'results', 'HOLDING.md'), 'w') as f:
+    f.write('# Holding period test\n\nDeposits starting every month, held 30/90/365 days, 16 pairs. % vs HODL.\n\n')
+    for sc in s.scenario.unique():
+        f.write(f'## {sc}\n\n' + s[s.scenario == sc].drop(columns='scenario').round(2).to_markdown(index=False) + '\n\n')
+print(s.round(2).to_string())

@@ -76,21 +76,25 @@ for y in (sorted(yr.unique()) if any(m._uses_score for _, m in mods) else []):
     clf.fit(F.loc[sub], (r2[sub] > r2[tr].quantile(0.9)).astype(int))
     score[te[te].index] = clf.predict_proba(F[te])[:, 1]
 rv60 = R.pow(2).rolling(60).mean().shift(1).bfill().values  # past-only realised variance, 1h
+TURNOVER = 0.10  # normal traders trade 10% of the pool per day at a 0.30% fee (~11%/yr fee income, typical major pool)
+qv = V.values.astype(float)
 
 rows = []
 for y in sorted(yr.unique()):
     msk = (yr == y).values
     if msk.sum() < 20000: continue
     P = p[msk]
-    ctx = dict(P=P, n=len(P), fund=fr[msk], score=score.values[msk], rv60=rv60[msk],
+    q = qv[msk]; retail = q / max(q.sum(), 1.0) * TURNOVER * 10e6 * len(P) / 1440  # follows Binance volume pattern
+    ctx = dict(P=P, n=len(P), fund=fr[msk], score=score.values[msk], rv60=rv60[msk], retail=retail,
                stale=np.r_[P[0], P[:-1]], pair=PAIR, year=int(y),
                P_all=p, fund_all=fr, yr_all=yr.values)  # full history, for methods that train on other years
     for nm, m in mods:
         for dn, kw in m.designs(ctx):
             t0 = time.time()
-            fin, worst, fund, gap, off = sim(P, fund=ctx['fund'], **kw)
+            fin, worst, fund, gap, off, f1, w1, f2, w2 = sim(P, fund=ctx['fund'], retail=retail, **kw)
             rows.append(dict(pair=PAIR, year=int(y), method=nm, design=dn, final=fin, worst=worst,
-                             funding=fund, gap=gap, off1pct=off, move=P[-1] / P[0] - 1, secs=round(time.time() - t0, 2)))
+                             funding=fund, gap=gap, off1pct=off, final_r1=f1, worst_r1=w1, final_r2=f2, worst_r2=w2,
+                             move=P[-1] / P[0] - 1, secs=round(time.time() - t0, 2)))
     print(PAIR, y, 'done', flush=True)
 os.makedirs(os.path.join(ROOT, 'results', 'raw'), exist_ok=True)
 out = pd.DataFrame(rows)
