@@ -26,20 +26,19 @@ starts = np.searchsorted(px.index.values, pd.date_range(t[0].normalize(), t[-1],
 starts = np.unique(starts)
 rows = []
 for s0 in starts:
-    for H in [30, 90, 365]:
+    for H in [30, 90, 365, 730]:
         e = s0 + H * 1440
         if e > len(p): continue
         P = p[s0:e]; v = np.sqrt(rv60[s0:e]); vf = np.clip(0.003 * v / np.median(v), 0.003, 0.03)
         ret = qv[s0:e] / max(qv[s0:e].sum(), 1) * 0.10 * 10e6 * H
         past = r[max(0, s0 - 525600):s0]; pv = np.std(past) * np.sqrt(525600) if len(past) > 200000 else np.nan
-        shield = dict(base=vf, gamma=1.0, hedge=1, Hp=lowpass_price(P, 10080), band=0.30)
-        D = {'Uniswap 0.30%': dict(base=0.003), 'Earn (fee only)': dict(base=vf, gamma=1.0),
-             'Shield band 5%': dict(base=vf, gamma=1.0, hedge=1, Hp=lowpass_price(P, 1440), band=0.05),
-             'Band 30% + 7d': shield,
-             'Per-pair rule (365d vol < 50% -> Earn)': (dict(base=vf, gamma=1.0) if (not np.isnan(pv) and pv < 0.5) else shield),
-             'FLAT Earn (0.30% + size fee)': dict(base=0.003, gamma=1.0),
-             'FLAT Band 30% + 7d': dict(base=0.003, gamma=1.0, hedge=1, Hp=lowpass_price(P, 10080), band=0.30),
-             'FLAT Per-pair rule': (dict(base=0.003, gamma=1.0) if (not np.isnan(pv) and pv < 0.5) else dict(base=0.003, gamma=1.0, hedge=1, Hp=lowpass_price(P, 10080), band=0.30))}
+        F = dict(base=0.003, gamma=1.0)
+        band30 = dict(F, hedge=1, Hp=lowpass_price(P, 10080), band=0.30)
+        D = {'Uniswap 0.30%': dict(base=0.003),
+             'CoW-style auction 80%': dict(auction=True, capture=0.8),
+             'EARN (0.30% + per-block size fee)': dict(F),
+             'Shield (band 5%)': dict(F, hedge=1, Hp=lowpass_price(P, 1440), band=0.05),
+             'Balanced (per-pair rule)': (dict(F) if (not np.isnan(pv) and pv < 0.5) else band30)}
         for dn, kw in D.items():
             o = sim(P, fund=fr[s0:e], retail=ret, **kw)
             rows.append(dict(pair=PAIR, start=str(t[s0].date()), days=H, design=dn, final=o[0], worst=o[1], final_r1=o[5], final_r2=o[7]))
