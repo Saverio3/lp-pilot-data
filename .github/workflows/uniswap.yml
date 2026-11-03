@@ -1,0 +1,26 @@
+name: fetch-uniswap
+# Real Uniswap pool data via The Graph. Needs repository secret GRAPH_API_KEY.
+on:
+  workflow_dispatch:
+  push:
+    paths: ['scripts/fetch_uniswap.py', '.github/workflows/uniswap.yml']
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install pandas pyarrow
+      - run: python scripts/fetch_uniswap.py 2>&1 | tee data/uniswap_log.txt
+        env: {GRAPH_API_KEY: '${{ secrets.GRAPH_API_KEY }}'}
+      - if: always()
+        run: |
+          git config user.name "data-bot"
+          git config user.email "data-bot@users.noreply.github.com"
+          git add data/uniswap_* || true
+          git commit -m "Uniswap pool data" || exit 0
+          for i in 1 2 3; do git pull --rebase -q && git push && break; sleep 10; done
