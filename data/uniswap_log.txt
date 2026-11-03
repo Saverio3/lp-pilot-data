@@ -1,0 +1,4 @@
+ethereum FAILED pools: HTTP Error 403: Forbidden
+arbitrum FAILED pools: HTTP Error 403: Forbidden
+base FAILED pools: HTTP Error 403: Forbidden
+matched pools: 0
