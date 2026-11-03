@@ -1,17 +1,73 @@
-Traceback (most recent call last):
-  File "/home/runner/work/lp-pilot-data/lp-pilot-data/lab/holding_summary.py", line 8, in <module>
-    gi = g.set_index(['pair', 'start', 'days'])[col] * 100; ui = u[col].reindex(gi.index) * 100
-                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/series.py", line 6035, in reindex
-    return super().reindex(
-           ^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/generic.py", line 5544, in reindex
-    return self._reindex_axes(
-           ^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/generic.py", line 5566, in _reindex_axes
-    new_index, indexer = ax.reindex(
-                         ^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/indexes/base.py", line 4447, in reindex
-    raise ValueError("cannot handle a non-unique multi-index!")
-ValueError: cannot handle a non-unique multi-index!
-SUMMARY FAILED
+                        scenario  days                                  design  median   mean  p5_worst_case  pct_positive  pct_beats_uniswap    n
+0         without normal traders    30                           Band 30% + 7d    0.24  -0.01          -2.43         62.82              53.45  928
+1         without normal traders    30                         Earn (fee only)    0.09  -0.01          -1.18         68.00              97.74  928
+2         without normal traders    30                      FLAT Band 30% + 7d    0.23  -0.03          -2.45         62.50              52.69  928
+3         without normal traders    30            FLAT Earn (0.30% + size fee)    0.09  -0.03          -1.22         66.70              99.35  928
+4         without normal traders    30                      FLAT Per-pair rule    0.14  -0.01          -2.23         65.95              64.55  928
+5         without normal traders    30  Per-pair rule (365d vol < 50% -> Earn)    0.15   0.01          -2.21         66.27              64.33  928
+6         without normal traders    30                          Shield band 5%    0.03  -0.01          -0.54         55.28              59.38  928
+7         without normal traders    30                           Uniswap 0.30%    0.06  -0.16          -1.41         61.96               0.00  928
+8         without normal traders    90                           Band 30% + 7d    0.65   0.04          -5.20         64.29              56.25  896
+9         without normal traders    90                         Earn (fee only)    0.35   0.02          -3.03         68.97              99.55  896
+10        without normal traders    90                      FLAT Band 30% + 7d    0.62  -0.05          -5.22         63.73              54.24  896
+11        without normal traders    90            FLAT Earn (0.30% + size fee)    0.30  -0.06          -3.12         67.19              99.78  896
+12        without normal traders    90                      FLAT Per-pair rule    0.51   0.02          -5.07         66.52              67.30  896
+13        without normal traders    90  Per-pair rule (365d vol < 50% -> Earn)    0.55   0.11          -5.05         67.30              69.08  896
+14        without normal traders    90                          Shield band 5%   -0.00  -0.02          -1.19         49.44              47.66  896
+15        without normal traders    90                           Uniswap 0.30%    0.18  -0.43          -3.83         60.83               0.00  896
+16        without normal traders   365                           Band 30% + 7d    0.63  -0.32         -10.21         52.39              56.38  752
+17        without normal traders   365                         Earn (fee only)    1.71   0.93         -11.07         68.22             100.00  752
+18        without normal traders   365                      FLAT Band 30% + 7d    0.46  -0.72         -10.65         51.99              53.46  752
+19        without normal traders   365            FLAT Earn (0.30% + size fee)    1.52   0.57         -11.40         66.49             100.00  752
+20        without normal traders   365                      FLAT Per-pair rule    0.64  -0.37         -10.16         55.19              64.63  752
+21        without normal traders   365  Per-pair rule (365d vol < 50% -> Earn)    0.82   0.03          -9.94         56.12              67.29  752
+22        without normal traders   365                          Shield band 5%   -0.19  -0.12          -3.07         42.29              43.35  752
+23        without normal traders   365                           Uniswap 0.30%    0.77  -0.94         -13.89         59.04               0.00  752
+24    with normal traders (mild)    30                           Band 30% + 7d    1.14   0.89          -1.69         84.91              53.45  928
+25    with normal traders (mild)    30                         Earn (fee only)    1.00   0.89          -0.35         93.10              97.74  928
+26    with normal traders (mild)    30                      FLAT Band 30% + 7d    1.14   0.87          -1.71         84.81              52.69  928
+27    with normal traders (mild)    30            FLAT Earn (0.30% + size fee)    0.99   0.86          -0.39         92.46              99.35  928
+28    with normal traders (mild)    30                      FLAT Per-pair rule    1.04   0.89          -1.47         86.53              64.55  928
+29    with normal traders (mild)    30  Per-pair rule (365d vol < 50% -> Earn)    1.05   0.91          -1.45         86.64              64.33  928
+30    with normal traders (mild)    30                          Shield band 5%    0.93   0.89           0.26         97.52              59.38  928
+31    with normal traders (mild)    30                           Uniswap 0.30%    0.96   0.74          -0.67         91.49               0.00  928
+32    with normal traders (mild)    90                           Band 30% + 7d    3.43   2.74          -3.26         88.50              56.25  896
+33    with normal traders (mild)    90                         Earn (fee only)    3.07   2.71          -0.73         93.86              99.55  896
+34    with normal traders (mild)    90                      FLAT Band 30% + 7d    3.40   2.65          -3.32         87.95              54.24  896
+35    with normal traders (mild)    90            FLAT Earn (0.30% + size fee)    3.03   2.63          -0.75         93.64              99.78  896
+36    with normal traders (mild)    90                      FLAT Per-pair rule    3.25   2.72          -3.23         89.96              67.30  896
+37    with normal traders (mild)    90  Per-pair rule (365d vol < 50% -> Earn)    3.27   2.80          -3.20         90.40              69.08  896
+38    with normal traders (mild)    90                          Shield band 5%    2.71   2.68           1.07         97.77              47.66  896
+39    with normal traders (mild)    90                           Uniswap 0.30%    2.91   2.27          -1.68         91.96               0.00  896
+40    with normal traders (mild)   365                           Band 30% + 7d   11.43  10.26          -3.11         90.29              56.38  752
+41    with normal traders (mild)   365                         Earn (fee only)   13.28  11.51          -3.00         92.95             100.00  752
+42    with normal traders (mild)   365                      FLAT Band 30% + 7d   11.26   9.86          -3.50         88.83              53.46  752
+43    with normal traders (mild)   365            FLAT Earn (0.30% + size fee)   13.04  11.15          -3.32         92.29             100.00  752
+44    with normal traders (mild)   365                      FLAT Per-pair rule   11.66  10.20          -3.07         89.36              64.63  752
+45    with normal traders (mild)   365  Per-pair rule (365d vol < 50% -> Earn)   11.93  10.60          -2.82         90.82              67.29  752
+46    with normal traders (mild)   365                          Shield band 5%   10.33  10.46           3.27         99.34              43.35  752
+47    with normal traders (mild)   365                           Uniswap 0.30%   12.12   9.64          -4.76         89.36               0.00  752
+48  with normal traders (strong)    30                           Band 30% + 7d    0.88   0.61          -1.96         81.25              37.82  928
+49  with normal traders (strong)    30                         Earn (fee only)    0.74   0.62          -0.63         90.19               9.81  928
+50  with normal traders (strong)    30                      FLAT Band 30% + 7d    1.07   0.80          -1.75         84.16              48.92  928
+51  with normal traders (strong)    30            FLAT Earn (0.30% + size fee)    0.93   0.81          -0.45         92.35              44.83  928
+52  with normal traders (strong)    30                      FLAT Per-pair rule    0.98   0.83          -1.52         86.21              43.64  928
+53  with normal traders (strong)    30  Per-pair rule (365d vol < 50% -> Earn)    0.79   0.64          -1.73         83.73              33.08  928
+54  with normal traders (strong)    30                          Shield band 5%    0.67   0.61          -0.02         94.61              16.92  928
+55  with normal traders (strong)    30                           Uniswap 0.30%    0.96   0.74          -0.67         91.49               0.00  928
+56  with normal traders (strong)    90                           Band 30% + 7d    2.58   1.86          -3.89         84.49              31.25  896
+57  with normal traders (strong)    90                         Earn (fee only)    2.22   1.84          -1.35         90.85              10.83  896
+58  with normal traders (strong)    90                      FLAT Band 30% + 7d    3.20   2.46          -3.42         87.39              48.77  896
+59  with normal traders (strong)    90            FLAT Earn (0.30% + size fee)    2.86   2.46          -0.85         92.97              54.13  896
+60  with normal traders (strong)    90                      FLAT Per-pair rule    3.07   2.53          -3.35         89.51              45.65  896
+61  with normal traders (strong)    90  Per-pair rule (365d vol < 50% -> Earn)    2.44   1.93          -3.86         86.72              28.79  896
+62  with normal traders (strong)    90                          Shield band 5%    1.85   1.79           0.31         95.76              19.53  896
+63  with normal traders (strong)    90                           Uniswap 0.30%    2.91   2.27          -1.68         91.96               0.00  896
+64  with normal traders (strong)   365                           Band 30% + 7d    7.97   6.54          -5.70         77.13              16.62  752
+65  with normal traders (strong)   365                         Earn (fee only)    9.31   7.82          -5.35         87.50              13.03  752
+66  with normal traders (strong)   365                      FLAT Band 30% + 7d   10.52   9.14          -3.73         86.70              45.21  752
+67  with normal traders (strong)   365            FLAT Earn (0.30% + size fee)   12.26  10.49          -3.56         91.89              65.29  752
+68  with normal traders (strong)   365                      FLAT Per-pair rule   10.94   9.49          -3.43         87.63              44.95  752
+69  with normal traders (strong)   365  Per-pair rule (365d vol < 50% -> Earn)    8.28   6.88          -5.38         79.52              16.22  752
+70  with normal traders (strong)   365                          Shield band 5%    6.63   6.74           1.02         97.61              21.54  752
+71  with normal traders (strong)   365                           Uniswap 0.30%   12.12   9.64          -4.76         89.36               0.00  752
