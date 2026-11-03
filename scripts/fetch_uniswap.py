@@ -2,9 +2,11 @@
 For the biggest Uniswap v3 pools matching our coins: daily volume, liquidity (TVL), fees and swap counts since 2022.
 This replaces the lab's assumed normal-trader turnover (10%/day) with real numbers.
 Saves data/uniswap_pooldays.parquet and data/uniswap_pools.csv; prints a summary."""
-import os, json, time, urllib.request, pandas as pd
+import os, json, time, urllib.request, urllib.error, pandas as pd
 
-KEY = os.environ['GRAPH_API_KEY']
+KEY = os.environ.get('GRAPH_API_KEY', '').strip()
+print('API key present:', bool(KEY), '| length:', len(KEY), flush=True)
+UA = {'Content-Type': 'application/json', 'User-Agent': 'lp-pilot-research/1.0', 'Accept': 'application/json'}
 SUBGRAPHS = {  # official Uniswap v3 subgraphs on The Graph network (IDs); failures are reported, not fatal
     'ethereum': '5zvR82QoaXYFyDEKLZ9t6v9adgnptxYpKpSbxtgVENFV',
     'arbitrum': 'FbCGRftH4a3yZugY7TnbYgPJVEv2LvMT6oF1fxPe9aJM',
@@ -16,15 +18,21 @@ COINS = {'WETH': 'ETH', 'ETH': 'ETH', 'WBTC': 'BTC', 'cbBTC': 'BTC', 'tBTC': 'BT
 
 
 def q(sub, query):
-    url = f'https://gateway.thegraph.com/api/{KEY}/subgraphs/id/{sub}'
-    req = urllib.request.Request(url, data=json.dumps({'query': query}).encode(), headers={'Content-Type': 'application/json'})
-    for attempt in range(4):
-        try:
-            r = json.loads(urllib.request.urlopen(req, timeout=60).read())
-            if 'errors' in r: raise RuntimeError(r['errors'])
-            return r['data']
-        except Exception as e:
-            err = e; time.sleep(3 * (attempt + 1))
+    body = json.dumps({'query': query}).encode()
+    tries = [(f'https://gateway.thegraph.com/api/{KEY}/subgraphs/id/{sub}', UA),
+             (f'https://gateway.thegraph.com/api/subgraphs/id/{sub}', dict(UA, Authorization=f'Bearer {KEY}'))]
+    err = None
+    for attempt in range(3):
+        for url, hd in tries:
+            try:
+                r = json.loads(urllib.request.urlopen(urllib.request.Request(url, data=body, headers=hd), timeout=60).read())
+                if 'errors' in r: raise RuntimeError(str(r['errors'])[:300])
+                return r['data']
+            except urllib.error.HTTPError as e:
+                err = RuntimeError(f'HTTP {e.code}: ' + e.read()[:300].decode('utf-8', 'ignore'))
+            except Exception as e:
+                err = e
+        time.sleep(3 * (attempt + 1))
     raise err
 
 
